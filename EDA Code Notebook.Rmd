@@ -26,7 +26,12 @@ We first load the dataset and the tidyverse package in preparation for further e
 pacman::p_load(tidyverse)
 
 #Load the `music` dataset
+music <- read_csv("/Users/ivanmartinez-kay/QTM-302W/Data/music.csv", col_names = TRUE) 
+                
 data(music)
+
+print(names(music))
+
 ```
 
 We then apply head(), str(), and summary() to obtain an overview of the dataset.
@@ -39,12 +44,52 @@ head(music)
 ```{r}
 #Review the structure of the dataset
 str(music)
+
+# Print the column names to confirm
+print(names(music))
 ```
 
 ```{r}
 #Review the summary of the data
 summary(music)
 ```
+
+```{r}
+#Counting unique values in the "track_name" column
+unique_tracks <- unique(music$track_name)
+num_unique_tracks <- length(unique_tracks)
+
+#Print the number of unique tracks
+print(num_unique_tracks)
+
+```
+```{r}
+# Check the data type of the genre column
+str(music$genre)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(magrittr)
+
+medians <- music %>%
+  group_by("genre") %>%
+  summarise(median_danceability = median("danceability", na.rm = TRUE))
+
+music <- music %>%
+  left_join(medians, by = "genre")
+
+ggplot(music, aes(x = "genre", y = "danceability", fill = median_danceability)) +
+  geom_boxplot() +
+  scale_fill_gradient(low = "blue", high = "red") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Box Plot of Danceability Scores by Genre",
+       x = "Genre",
+       y = "Danceability",
+       fill = "Median Danceability")
+```
+
 
 Below are what we notice about the music dataset after some basic exploration:
 
