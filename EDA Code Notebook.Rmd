@@ -1,6 +1,6 @@
 ---
 title: "R Notebook"
-output: html_document
+output: html_notebook
 ---
 
 Components of Analysis (from canvas, basically the rubric for the assignment)
