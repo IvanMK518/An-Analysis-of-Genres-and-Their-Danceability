@@ -1,0 +1,61 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Components of Analysis (from canvas, basically the rubric for the assignment)
+* Introducing the dataset (including its source, scope, and any ethical considerations) framed by the purpose of the exploratory analysis, anticipating any subsetting or re-ordering of the data for your interests
+* Reading the data into R in a tabular format, identifying, subsetting, and renaming the variables for your use
+* Forming the core data frame that you'll be working from by reshaping and summarizing the data, storing new data frames in memory where appropriate
+* Cleaning the data according to your purpose for the dataset
+* Plotting distributions of your data
+* Calculating basic statistical metrics like central tendency measures
+* Some light correlational analysis/visualization of key variables.
+* A look forward to what further questions the analysis suggests and what it enables
+
+# Music Dataset : 1950 to 2019
+
+## Introduction
+
+In a nutshell, our dataset collects music produced from 1950 to 2019, fetched from Spotify. We obtained the dataset from Kaggle (DOI: 10.17632/3t9vbwxgr5.3), where the description said, "This dataset provides a list of lyrics from 1950 to 2019 describing music metadata as sadness, danceability, loudness, acousticness, etc. Authors also provide some information as lyrics which can be used to natural language processing." Our purpose TKTK (after we decide on the question to support further exploration).
+
+We first load the dataset and the tidyverse package in preparation for further exploration.
+
+```{r}
+#Load the `tidyverse` package
+pacman::p_load(tidyverse)
+
+#Load the `music` dataset
+data(music)
+```
+
+We then apply head(), str(), and summary() to obtain an overview of the dataset.
+
+```{r}
+#Print the first 6 observations
+head(music)
+```
+
+```{r}
+#Review the structure of the dataset
+str(music)
+```
+
+```{r}
+#Review the summary of the data
+summary(music)
+```
+
+Below are what we notice about the music dataset after some basic exploration:
+
+* The head() function gives us a close look at the rows and the columns of the dataset. The rows tell us that the dataset contains 28,372 songs, with each row corresponding to one specific song. The first seven columns provide each listed song with (I'm not sure what the first row is about, maybe we can delete it) the artist's name, the song's name, the release date, the genre, a few lines of lyrics, and the length of the song (measured in seconds). 
+
+* Aside from the above mentioned 7 columns that provide the basic identification of the listed songs, the remaining columns meansure each song on 24 different dimensions. Some examples include (the following is from the paper based on this dataset, I will paraphrase them later)
+  * Acousticness: Presence of acoustic instruments
+  * Danceability: how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity
+  * Loudness: The average loudness in decibels (dB) across the entire track
+  * Instrumentalness: A high value describes whether a track contains fewer vocals
+  * Valence: High (low) values means that the track is more happy, euphoric (sad, angry)
+  * Energy: Measures intensity and activity of music. Energetic tracks will be fast, loud and noisy
+
+* The str() function then gives us the variable types included in the dataset. The majority of the variables possess the form of numbers, followed by some characters. Finally, the summary() function provides us with all the statistical measurements of the variables. (We can further discuss some interesting tendency/outliers here, leading to the question we wanna prpose for further exploration.)
