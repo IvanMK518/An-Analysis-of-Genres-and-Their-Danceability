@@ -26,13 +26,50 @@ We first load the dataset and the tidyverse package in preparation for further e
 #Load the `tidyverse` package
 pacman::p_load(tidyverse)
 
-#Load the `music` dataset
-data(music)
+#Load the `music` dataset which is the csv file tcc_ceds_music
+data(tcc_ceds_music)
 ```
 
 We then apply head(), str(), and summary() to obtain an overview of the dataset.
 
 ```{r}
 #Print the first 6 observations
-head(music)
+head(tcc_ceds_music)
+```
+
+
+```{r}
+# Counting unique values in the "track_name" column
+unique_tracks <- unique(tcc_ceds_music$track_name)
+num_unique_tracks <- length(unique_tracks)
+
+# Print the number of unique tracks
+print(num_unique_tracks)
+```
+
+Below is the code for a Boxplot with a color gradient
+
+```{r}
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("magrittr")
+library(ggplot2)
+library(dplyr)
+library(magrittr)
+
+medians <- tcc_ceds_music %>%
+  group_by(genre) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+tcc_ceds_music <- tcc_ceds_music %>%
+  left_join(medians, by = "genre")
+
+ggplot(tcc_ceds_music, aes(x = genre, y = danceability, fill = median_danceability)) +
+  geom_boxplot() +
+  scale_fill_gradient(low = "blue", high = "red") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Box Plot of Danceability Scores by Genre",
+       x = "Genre",
+       y = "Danceability",
+       fill = "Median Danceability")
 ```
