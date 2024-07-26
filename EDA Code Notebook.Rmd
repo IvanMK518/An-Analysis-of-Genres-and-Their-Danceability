@@ -167,7 +167,7 @@ print(median_danceability_by_instrumentalness)
 
 ```{r}
 # Create bins for the instrumentalness variable
-num_bins <- 20 # Adjust the number of bins as needed
+num_bins <- 20 
 data <- data %>%
   mutate(instrumentalness_bin = cut(instrumentalness, breaks = num_bins))
 
