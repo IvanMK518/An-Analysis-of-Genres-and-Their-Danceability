@@ -22,17 +22,49 @@ In a nutshell, our dataset collects music produced from 1950 to 2019, fetched fr
 We first load the dataset and the tidyverse package in preparation for further exploration.
 
 ```{r}
-#Load the `tidyverse` package
-pacman::p_load(tidyverse)
+# Set CRAN mirror and install necessary packages
+options(repos = c(CRAN = "https://cran.rstudio.com"))
 
-#Load the `music` dataset
-music <- read_csv("/Users/ivanmartinez-kay/QTM-302W/Data/music.csv", col_names = TRUE) 
-                
-data(music)
+install.packages("evaluate")
+install.packages("renv")
+install.packages("tidyverse")
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("magrittr")
 
-print(names(music))
+# Snapshot, restore, and hydrate renv environment
+renv::snapshot()
+renv::restore()
+renv::hydrate()
 
+# Load necessary libraries
+library(tidyverse)
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(magrittr)
 ```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+renv::snapshot()
+renv::restore()
+renv::hydrate()
+```
+
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+```{r}
+library(readr)
+music <- read_csv("/Users/ivanmartinez-kay/QTM-302W/Data/music.csv") 
+```
+
 
 We then apply head(), str(), and summary() to obtain an overview of the dataset.
 
@@ -55,41 +87,177 @@ summary(music)
 ```
 
 ```{r}
-#Counting unique values in the "track_name" column
-unique_tracks <- unique(music$track_name)
-num_unique_tracks <- length(unique_tracks)
-
-#Print the number of unique tracks
-print(num_unique_tracks)
-
-```
-```{r}
-# Check the data type of the genre column
-str(music$genre)
+# Subset the dataset with the variables of interest
+data <- music[ ,c("genre", "loudness", "energy", 
+"danceability", "feelings", "instrumentalness", "lyrics")]
 ```
 
 ```{r}
-library(ggplot2)
 library(dplyr)
-library(magrittr)
 
-medians <- music %>%
-  group_by("genre") %>%
-  summarise(median_danceability = median("danceability", na.rm = TRUE))
+# Calculate median danceability by genre
+median_danceability_by_genre <- data %>%
+  group_by(genre) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
 
-music <- music %>%
-  left_join(medians, by = "genre")
-
-ggplot(music, aes(x = "genre", y = "danceability", fill = median_danceability)) +
-  geom_boxplot() +
-  scale_fill_gradient(low = "blue", high = "red") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Box Plot of Danceability Scores by Genre",
-       x = "Genre",
-       y = "Danceability",
-       fill = "Median Danceability")
+# Print the median danceability by genre
+print(median_danceability_by_genre)
 ```
 
+```{r}
+# Load necessary libraries
+library(readr)
+library(ggplot2)
+
+# Create a bar chart of median danceability by genre
+ggplot(median_danceability_by_genre, aes(x = genre, y = median_danceability)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Genre",
+       x = "Genre",
+       y = "Median Danceability")
+```
+
+```{r}
+library(dplyr)
+
+# Calculate median danceability by genre
+median_danceability_by_feeling <- data %>%
+  group_by(feelings) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+# Print the median danceability by genre
+print(median_danceability_by_feeling)
+```
+
+```{r}
+library(readr)
+library(ggplot2)
+
+# Bins to condense data of musical feel 
+num_bins <- 20 
+data <- data %>%
+  mutate(feeling_bin = cut(feelings, breaks = num_bins))
+
+# Calculate median danceability by feel of music
+median_danceability_by_feeling_bin <- data %>%
+  group_by(feeling_bin) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+# Bar chart of median danceability by feel
+ggplot(median_danceability_by_feeling_bin, aes(x = feeling_bin, y = median_danceability)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Feel",
+       x = "Feel",
+       y = "Median Danceability")
+```
+
+```{r}
+library(dplyr)
+
+# Calculate median danceability by genre
+median_danceability_by_instrumentalness <- data %>%
+  group_by(instrumentalness) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+# Print the median danceability by genre
+print(median_danceability_by_instrumentalness)
+```
+
+```{r}
+# Create bins for the instrumentalness variable
+num_bins <- 20 # Adjust the number of bins as needed
+data <- data %>%
+  mutate(instrumentalness_bin = cut(instrumentalness, breaks = num_bins))
+
+# Calculate median danceability by instrumentalness bin
+median_danceability_by_instrumentalness <- data %>%
+  group_by(instrumentalness_bin) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+# Bar chart of median danceability by instrumentality
+ggplot(median_danceability_by_instrumentalness, aes(x = instrumentalness_bin, y = median_danceability)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Instrumentality",
+       x = "Instrumentality",
+       y = "Median Danceability")
+```
+
+```{r}
+# Bins for condensing data inthe feelings and instrumentalness variables
+num_bins_feelings <- 2
+num_bins_instrumentalness <- 2
+
+data <- data %>%
+  mutate(feeling_bin = cut(feelings, breaks = num_bins_feelings),
+         instrumentalness_bin = cut(instrumentalness, 
+         breaks = num_bins_instrumentalness))
+
+# Calculate median danceability by genre, feelings bin, and instrumentalness bin
+median_danceability_by_genre_feeling_instrumentalness <- data %>%
+  group_by(genre, feeling_bin, instrumentalness_bin) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+# Create a bar chart of median danceability by genre, feelings bin, and instrumentalness bin
+ggplot(median_danceability_by_genre_feeling_instrumentalness, aes(x = interaction(feeling_bin, 
+instrumentalness_bin), y = median_danceability, fill = genre)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Genre, Feeling, and Instrumentalness",
+       x = "Feeling and Instrumentalness",
+       y = "Median Danceability",
+       fill = "Genre")
+```
+```{r}
+# Bins for condensing the data in feelings and instrumentalness variables
+num_bins_feelings <- 4
+num_bins_instrumentalness <- 4
+
+data <- data %>%
+  mutate(feeling_bin = cut(feelings, breaks = num_bins_feelings),
+         instrumentalness_bin = cut(instrumentalness, 
+         breaks = num_bins_instrumentalness))
+
+# Calculate median danceability by genre, feelings bin, and instrumentalness bin
+median_danceability_by_genre_feeling_instrumentalness <- data %>%
+  group_by(genre, feeling_bin, instrumentalness_bin) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+# Scatter plot with wider variety of data points
+ggplot(median_danceability_by_genre_feeling_instrumentalness, aes(x = interaction(feeling_bin, 
+instrumentalness_bin), y = median_danceability, color = genre)) +
+  geom_point(size = 3) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Genre, Feeling, and Instrumentalness",
+       x = "Feeling and Instrumentalness",
+       y = "Median Danceability",
+       color = "Genre")
+```
+```{r}
+library(dplyr)
+
+# Calculate median danceability by decibel level
+median_danceability_by_loudness <- data %>%
+  group_by(loudness) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+print(median_danceability_by_loudness)
+```
+
+```{r}
+library(readr)
+library(ggplot2)
+
+# Bar chart of median danceability by decibel level
+ggplot(median_danceability_by_loudness, aes(x = loudness, y = median_danceability)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Loudness",
+       x = "Loudness (Db)",
+       y = "Median Danceability")
+```
 
 Below are what we notice about the music dataset after some basic exploration:
 

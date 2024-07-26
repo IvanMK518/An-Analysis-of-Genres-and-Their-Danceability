@@ -122,3 +122,40 @@ ggplot(tcc_ceds_music, aes(x = genre, y = danceability, fill = median_danceabili
        y = "Danceability",
        fill = "Median Danceability")
 ```
+
+```{r}
+#Counting unique values in the "track_name" column
+unique_tracks <- unique(music$track_name)
+num_unique_tracks <- length(unique_tracks)
+
+#Print the number of unique tracks
+print(num_unique_tracks)
+
+```
+```{r}
+# Check the data type of the genre column
+str(music$genre)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(magrittr)
+
+medians <- music %>%
+  group_by("genre") %>%
+  summarise(median_danceability = median("danceability", na.rm = TRUE))
+
+music <- music %>%
+  left_join(medians, by = "genre")
+
+ggplot(music, aes(x = "genre", y = "danceability", 
+fill = median_danceability)) +
+  geom_boxplot() +
+  scale_fill_gradient(low = "blue", high = "red") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Box Plot of Danceability Scores by Genre",
+       x = "Genre",
+       y = "Danceability",
+       fill = "Median Danceability")
+```
