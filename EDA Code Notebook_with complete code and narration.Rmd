@@ -11,7 +11,7 @@ Music is a core human experience, a fundamental part of our evolution. Music is 
 
 The first step taken to begin the process of  filtering of data from this public music data set, was to install the Rstudio packages and libraries shown below:
 
-```{r
+```{r}
 # Set CRAN mirror and install necessary packages
 options(repos = c(CRAN = "https://cran.rstudio.com"))
 
