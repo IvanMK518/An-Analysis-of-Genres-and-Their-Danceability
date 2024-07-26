@@ -274,4 +274,11 @@ ggplot(median_danceability_by_loudness, aes(x = loudness, y = median_danceabilit
 
 Overall speaking, in this report we focus on danceability of a given track, aiming to find out the relationship between danceability with four other variables: genre, feelings, instrumentalness, and loudness. Although feelings doesn't seem to have any noticeable relationship with danceability, we did find out that the other three variables having some potentially interesting relationships with danceability. Specifically, hip hop has the highest median danceability while rock has the lowest; lower instrumentality usually indicate higher median danceability; track with 0.67 Db of loudness usually has the lowest median danceability, while track with 0.5 Db and 0.75 Db of loudness have the highest. 
 
-We would like to further explore the relationship between danceability with other variables and the reasons behind in our upcoming research project. We hope that this could serve as an replicable analysis model for people finding danceable music - the next time they are in the mood for dancing.
+We would like to further explore the relationship between danceability with other variables and the reasons behind in our upcoming research project. We hope that this could serve as an replicable analysis model for people finding danceable music - the next time they are in the mood for dancing. Danceability is an exciting song characteristic, but it is by no means the only one that can be analyzed. Additionally, "data preparation" and analyses similar to this code notebook breakdown function as a baseline for song recommendation algorthims on streaming platforms. Taking playlist data and finding matches in songs (and artists) with similar characeristics is a large part of manufacturing popularity surrounding new music. 
+
+
+Works cited:
+
+Shahane, S. (2019). Music Dataset: 1950 to 2019 [Data set]. Kaggle. https://www.kaggle.com/datasets/saurabhshahane/music-dataset-1950-to-2019/data
+
+Misael, L., Forster, C., Fontelles, E., Sampaio, V., & França, M. (2020, October). Temporal analysis and visualisation of music. In Anais do XVII Encontro Nacional de Inteligência Artificial e Computacional (pp. 507-518). SBC.
