@@ -43,6 +43,15 @@ knitr::opts_chunk$set(echo = TRUE)
 A preliminary step to filtering the data set is to test R and our music.csv file. This code snippet prints the first 6 observations, just to be sure we are working with the correct data set as R working directories may get crowded. 
 
 ```{r}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+```{r}
+library(readr)
+music <- read_csv("/Users/ivanmartinez-kay/QTM-302W/Data/music.csv") 
+```
+```{r}
 head(music)
 ```
 
@@ -190,7 +199,7 @@ ggplot(median_danceability_by_instrumentalness, aes(x = instrumentalness_bin, y 
        y = "Median Danceability")
 ```
 
-The resulting chart again doesn't show a clear trend in terms of change of median danceability between differnet levels of instrumentality. However, we would argue that roughly speaking, lower instrumentality is correlated with higher median danceability, as the bar chart's height shows a slight decreasing trend in median danceability as instrumentality increases. Recalling that a higher score in instrumentalness indicates a lower level of vocal a track contains, we can perhaps reach the conclusion that the more vocals a track contains, the more danceable the track is. 
+The resulting chart, again doesn't show a clear trend in terms of change of median danceability between differnet levels of instrumentality. However, we would argue that roughly speaking, lower instrumentality is correlated with higher median danceability, as the bar chart's height shows a slight decreasing trend in median danceability as instrumentality increases. Recalling that a higher score in instrumentalness indicates a lower level of vocal a track contains, we can perhaps reach the conclusion that the more vocals a track contains, the more danceable the track is. 
 
 ```{r}
 # Bins for condensing data inthe feelings and instrumentalness variables
@@ -217,31 +226,9 @@ instrumentalness_bin), y = median_danceability, fill = genre)) +
        y = "Median Danceability",
        fill = "Genre")
 ```
-```{r}
-# Bins for condensing the data in feelings and instrumentalness variables
-num_bins_feelings <- 4
-num_bins_instrumentalness <- 4
 
-data <- data %>%
-  mutate(feeling_bin = cut(feelings, breaks = num_bins_feelings),
-         instrumentalness_bin = cut(instrumentalness, 
-         breaks = num_bins_instrumentalness))
+This graph synthesizes the information of the three previous bar charts. It once again demonstrates that even on a basis of feel and instumentality, reggae and hip hop are among the most consistently danceable subcategories of music.
 
-# Calculate median danceability by genre, feelings bin, and instrumentalness bin
-median_danceability_by_genre_feeling_instrumentalness <- data %>%
-  group_by(genre, feeling_bin, instrumentalness_bin) %>%
-  summarise(median_danceability = median(danceability, na.rm = TRUE))
-
-# Scatter plot with wider variety of data points
-ggplot(median_danceability_by_genre_feeling_instrumentalness, aes(x = interaction(feeling_bin, 
-instrumentalness_bin), y = median_danceability, color = genre)) +
-  geom_point(size = 3) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Median Danceability by Genre, Feeling, and Instrumentalness",
-       x = "Feeling and Instrumentalness",
-       y = "Median Danceability",
-       color = "Genre")
-```
 ```{r}
 library(dplyr)
 
@@ -264,6 +251,19 @@ library(ggplot2)
 # Bar chart of median danceability by decibel level
 ggplot(median_danceability_by_loudness, aes(x = loudness, y = median_danceability)) +
   geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Loudness",
+       x = "Loudness (Db)",
+       y = "Median Danceability")
+```
+
+```{r}
+library(readr)
+library(ggplot2)
+
+# Line graph of median danceability by decibel level
+ggplot(median_danceability_by_loudness, aes(x = loudness, y = median_danceability)) +
+  geom_line(color = "blue") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(title = "Median Danceability by Loudness",
        x = "Loudness (Db)",
