@@ -132,7 +132,7 @@ median_danceability_by_feeling <- data %>%
 print(median_danceability_by_feeling)
 ```
 
-The data is obviously very difficult to grasp what value or what range of values of feeling has the highest median danceability, despite that we have successfully calculated the data. To give ourselves a clearer idea of the data at hand, we turn to the next step - visualization.
+In the data, it is obviously very difficult to grasp what value or what range of values of feeling has the highest median danceability, despite that we have successfully calculated the data. To give ourselves a clearer idea of the data at hand, we turn to the next step - visualization.
 
 The following code could be understood by grouping them into three different sets, as separated by the comments below. As the feeling is a set of continuous variables, we cannot simply separate them into different columns. To this end, we have the first set of code setting the number of bins to 20 for condensing the data of musical feelings into 20 different columns. The, we start a pipeline for a new dataframe for visualization and create a new column 'feeling_bin' to contain the newly separated 20 columns of values for feelings.
 
@@ -161,7 +161,7 @@ ggplot(median_danceability_by_feeling_bin, aes(x = feeling_bin, y = median_dance
        y = "Median Danceability")
 ```
 
-The bar chart in fact has a roughly equal heights, with minor variability not exceeding 0.1, except one outlier for the feelings between [0.671 to 0.719]. The sudden drop in median danceability can be due to a lot of factors. Our guess would be it might be a coincidence - if we devide up the feelings differently, for example, into 15 columns or into 25 columns instead of 20 columns, such gap in the median danceability might not be the case at all. 
+The bar charts in fact have roughly equal heights, with minor variability not exceeding 0.1, except one outlier for the feelings between [0.671 to 0.719]. The sudden drop in median danceability can be due to a lot of factors. Our guess would be it might be a coincidence - if we devide up the feelings differently, for example, into 15 columns or into 25 columns instead of 20 columns, such gap in the median danceability might not be the case at all. 
 
 Moving on, we again want to measure the median danceability by instrumentalness. The underlying logic for calculation remains the same, where the first line initiates a pipeline for the dataset, the second line grouping the data by the instrumentalness columns, and the third line calculating the median of the danceability column for each group of instrumentalness, the fourth line printing the final dataset, which contains the median danceability values for each instrumentalness. 
 
