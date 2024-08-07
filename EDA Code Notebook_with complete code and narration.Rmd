@@ -160,6 +160,26 @@ ggplot(median_danceability_by_feeling_bin, aes(x = feeling_bin, y = median_dance
        x = "Feel",
        y = "Median Danceability")
 ```
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Assuming your data frame is named 'data'
+
+# Group data by genre, calculate median feeling
+median_feeling_by_genre <- data %>%
+  group_by(genre) %>%
+  summarise(median_feeling = median(feelings, na.rm = TRUE)) %>%
+  ungroup()
+
+# Create a bar chart to visualize median feeling by genre
+ggplot(median_feeling_by_genre, aes(x = genre, y = median_feeling)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Feeling by Genre",
+       x = "Genre",
+       y = "Median Feeling")
+```
 
 The bar charts in fact have roughly equal heights, with minor variability not exceeding 0.1, except one outlier for the feelings between [0.671 to 0.719]. The sudden drop in median danceability can be due to a lot of factors. Our guess would be it might be a coincidence - if we devide up the feelings differently, for example, into 15 columns or into 25 columns instead of 20 columns, such gap in the median danceability might not be the case at all. 
 
@@ -197,6 +217,27 @@ ggplot(median_danceability_by_instrumentalness, aes(x = instrumentalness_bin, y 
   labs(title = "Median Danceability by Instrumentality",
        x = "Instrumentality",
        y = "Median Danceability")
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Assuming your data frame is named 'data'
+
+# Group data by genre, calculate median feeling
+median_instrumentalness_by_genre <- data %>%
+  group_by(genre) %>%
+  summarise(median_instrumentalness = median(instrumentalness, na.rm = TRUE)) %>%
+  ungroup()
+
+# Create a bar chart to visualize median feeling by genre
+ggplot(median_instrumentalness_by_genre, aes(x = genre, y = median_instrumentalness)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Instrumentality by Genre",
+       x = "Genre",
+       y = "Median Instrumentality")
 ```
 
 The resulting chart, again doesn't show a clear trend in terms of change of median danceability between differnet levels of instrumentality. However, we would argue that roughly speaking, lower instrumentality is correlated with higher median danceability, as the bar chart's height shows a slight decreasing trend in median danceability as instrumentality increases. Recalling that a higher score in instrumentalness indicates a lower level of vocal a track contains, we can perhaps reach the conclusion that the more vocals a track contains, the more danceable the track is. 
