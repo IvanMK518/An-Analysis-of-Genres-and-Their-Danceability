@@ -28,6 +28,8 @@ To give you an overview of the content this repository contains, you can find th
 
 We encourage others to read on and continue build on our analysis. One potential next step is to explore other features of songs from our dataset. The dataset we are using have more than 30 different measurements of songs, and we have only selected a few to clean and visualize. As a result, please feel free to copy and coding and reuse them on some of the other columns so that the next time someone is feeling like dancing, they can judge a song not only based on the qualities we have presented.
 
+So far, we have concluded that high instrumentality, acousticness, and energy correlate to lower danceability. Loudness and and valence are directly proportional to danceability. This suggests that euphoric and lyrical music are most danceable, explaining why hip hop and reggae lead.
+
 ## Needs of this project
 
 - data exploration/descriptive statistics
@@ -40,11 +42,12 @@ We encourage others to read on and continue build on our analysis. One potential
 * Data
     * music.csv
 * Markup
-    * EDA_Code-Notebook_with_complete_code_and_narration
+    * EDA_Code-Notebook_with_complete_code_and_narration.html
 * R
-    * .DS_Store
-    * README.md
-    * renv.lock
+  * EDA_Code-Notebook_with_complete_code_and_narration.rmd
+* .DS_Store
+* README.md
+* renv.lock
 
 
 ## Getting Started
