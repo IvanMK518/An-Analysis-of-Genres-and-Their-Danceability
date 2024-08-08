@@ -47,6 +47,24 @@ R
     README.md
     renv.lock
 
+.
+└── Edit me to generate/
+    ├── a/
+    │   └── nice/
+    │       └── tree/
+    │           ├── diagram!
+    │           └── :)
+    └── Use indentation/
+        ├── to indicate/
+        │   ├── file
+        │   ├── and
+        │   ├── folder
+        │   └── nesting.
+        └── You can even/
+            └── use/
+                ├── markdown
+                └── bullets!
+
 ## Getting Started
 
 1. Clone this repo (for help see this [tutorial](https://help.github.com/articles/cloning-a-repository/)).
