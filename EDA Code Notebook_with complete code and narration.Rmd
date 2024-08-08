@@ -1,5 +1,11 @@
 ---
-title: "R Notebook"
+title: "An Analysis of Music Genres and Their Danceability"
+author:
+- name: Ivan Martinez-Kay
+- name: Daniel Nickas
+- name: Sandy Ge
+affiliation: Emory University
+date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_notebook
 ---
 
@@ -523,12 +529,14 @@ Median danceability has high fluctuations at lower energy values, while hitting 
 
 ## Conclusion
 
-Overall speaking, in this report we focus on the danceability of different genres, aiming to find the relationship between five other variables: feeling, instrumentality, loudness, valence, and energy. Although rock remained the outlier through our analysis of feeling, instrumentality, and loudness, valence and energy gave a basis to our initial hypothesis. What we have found is that instrumentality and acousticness have an inverse relationship with danceability. Our lowest scorers tended to have the highest scores in these categories. On the other side of the spectrum, valency had a directly proportional (linear) relationship with danceability. Our leaders had the highest scores in this category. Loudness though not linear provided a clear elimination of our outlier: rock. Feeling yielded the most inconsistent results with some slight contradictions.
+Overall, in this report we focus on the danceability of different genres, aiming to find the relationship between five other variables: feeling, instrumentality, loudness, valence, and energy. Although rock remained the outlier through our analysis of feeling, instrumentality, and loudness, valence and energy gave a basis to our initial hypothesis. What we have found is that instrumentality and acousticness have an inverse relationship with danceability. Our lowest scorers tended to have the highest scores in these categories. On the other side of the spectrum, valency had a directly proportional (linear) relationship with danceability. Our leaders had the highest scores in this category. Loudness though not linear provided a clear elimination of our outlier: rock. Feeling yielded the most inconsistent results with some slight contradictions.
+
 Danceability is an exciting song characteristic, but it is by no means the only one that can be analyzed. Additionally, “data preparation” and analyses similar to this code notebook breakdown function as a baseline for song recommendation algorthims on streaming platforms. Taking playlist data and finding matches in songs (and artists) with similar characeristics is a large part of manufacturing popularity surrounding new music.
+
 To conclude, we have found hip hop and reggae to be the most danceable for the following reasons: low acousticness, low instrumentality, high loudness, high valency, and mild energy. We believe that this points to another idea that lyrical and groovy music is more danceable. With less melodic complexities, it is easier to reap the benefits of danceability.
 
 
-Works cited:
+## Works cited:
 
 Shahane, S. (2019). Music Dataset: 1950 to 2019 [Data set]. Kaggle. https://www.kaggle.com/datasets/saurabhshahane/music-dataset-1950-to-2019/data
 
