@@ -82,7 +82,6 @@ In our quest to find which songs and corresponding genres from the dataset were 
   * Loudness: The average loudness in decibels (dB) across the entire track
   * Instrumentalness: A high value describes whether a track contains fewer vocals
   * Valence: High (low) values means that the track is more happy, euphoric (sad, angry)
-  * Energy: Measures intensity and activity of music. Energetic tracks will be fast, loud and noisy
 Each characteristic as mentioned would be assigned a value between 0-1 based on equation 1 (shown above).
 
 ## Analysis
@@ -92,7 +91,7 @@ The code snippet just below is selecting specific columns from our initial music
 ```{r}
 data <- music[ ,c("genre", "loudness", 
 "danceability", "feelings", "instrumentalness", "acousticness",
-"valence", "energy")]
+"valence")]
 ```
 
 In this small code chunk below, the median danceability by genre is found from the data set.
@@ -432,28 +431,6 @@ ggplot(median_valence_by_genre, aes(x = genre, y = median_valence)) +
        x = "Genre",
        y = "Median Valence")
 ```
-
-```{r}
-library(dplyr)
-library(ggplot2)
-
-# Assuming your data frame is named 'data'
-
-# Group data by genre, calculate median feeling
-median_energy_by_genre <- data %>%
-  group_by(genre) %>%
-  summarise(median_energy = median(energy, na.rm = TRUE)) %>%
-  ungroup()
-
-# Create a bar chart to visualize median feeling by genre
-ggplot(median_energy_by_genre, aes(x = genre, y = median_energy)) +
-  geom_dotplot(binaxis = 'y', stackdir = 'center', dotsize = 1) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Median Energy by Genre",
-       x = "Genre",
-       y = "Median Energy")
-```
-
 
 
 ## Conclusion
