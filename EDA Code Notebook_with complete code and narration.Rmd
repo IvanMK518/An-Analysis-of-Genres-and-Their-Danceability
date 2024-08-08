@@ -117,9 +117,11 @@ ggplot(median_danceability_by_genre, aes(x = genre, y = median_danceability)) +
        y = "Median Danceability")
 ```
 
-From the above visualization, we notice that hiphop genre has the highest media danceability, closely followed by reggae, which similar to what people would generally assume. The genre with the lowest danceability is rock, with the second lowest genre being blues. As blues is a rather slow genre, we are not surprised to see it ranked so low. However, rock, being such a rhythmic genre but ranking as the least danceable genre, is quite surprising to us. 
+From the above visualization, we notice that hiphop genre has the highest median danceability, closely followed by reggae, which is similar to what people would generally assume. The genre with the lowest danceability is rock, with the second lowest genre being blues. As blues is a rather slow genre, we are not surprised to see it ranked so low. However, rock, being such a rhythmic genre but ranking as the least danceable genre, is quite surprising to us. 
 
-For the next part, we mainly want to visualize media danceability by different values of feeling. To do so, we first need to calculate the media danceability by feeling, which is accomplished by the first three lines of the following code, where the first line initiates a pipeline for the dataset, the second line grouping the data by the feeling columns, and the thid line calculating the median of the danceability column for each group of feelings. As a sidenote, the na.rm = TRUE argument ensures that any NA (missing) values in the danceability column are ignored during the median calculation. Then, the fourth line prints the median_danceability_by_feeling dataframe, which contains the median danceability values for each feeling.
+# Feeling
+
+Next, we mainly want to visualize median danceability by different values of feeling. To do so, we first need to calculate the median danceability by feeling, which is accomplished by the first three lines of the following code, where the first line initiates a pipeline for the dataset, the second line grouping the data by the feeling columns, and the third line calculating the median of the danceability column for each group of feelings. As a sidenote, the na.rm = TRUE argument ensures that any NA (missing) values in the danceability column are ignored during the median calculation. Then, the fourth line prints the median_danceability_by_feeling dataframe, which contains the median danceability values for each feeling. The subsequent calculations will follow suit.
 
 ```{r}
 library(dplyr)
@@ -133,115 +135,145 @@ median_danceability_by_feeling <- data %>%
 print(median_danceability_by_feeling)
 ```
 
-In the data, it is obviously very difficult to grasp what value or what range of values of feeling has the highest median danceability, despite that we have successfully calculated the data. To give ourselves a clearer idea of the data at hand, we turn to the next step - visualization.
+With raw data, it is obviously very difficult to grasp what value or what range of values of feeling has the highest median danceability, which is why we separate the data into bins. 
 
-The following code could be understood by grouping them into three different sets, as separated by the comments below. As the feeling is a set of continuous variables, we cannot simply separate them into different columns. To this end, we have the first set of code setting the number of bins to 20 for condensing the data of musical feelings into 20 different columns. The, we start a pipeline for a new dataframe for visualization and create a new column 'feeling_bin' to contain the newly separated 20 columns of values for feelings.
+The following code could be understood by grouping them into three different sets, as separated by the comments below. Feeling is a set of continuous variables, we cannot simply separate them into different columns. To this end, we set the number of bins to 20000 for condensing the data of musical feelings. Then, we start a pipeline for a new dataframe for visualization and create a 'feeling_bin' to contain the newly separated 17000 points of values for feelings.
 
-The second set of code repeats the calculation of the median danceability values for each feeling. Then the third set of code turn the calculation into visualization, specifically, a bar chart. The first line initializes a ggplot object with the new variable feeling_bin on the x-axis and median_danceability on the y-axis. The second line creates a bar chart where the height of the bars represents the median danceability values with the color blue. The third line adjusts the x-axis text to be displayed vertically to improve readability. Finally, the fourth line adds a title and labels to the x and y axes.
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Group data by genre, calculate average feeling
+average_feeling_by_genre <- data %>%
+  group_by(genre) %>%
+  summarise(average_feeling = mean(feelings, na.rm = TRUE)) %>%
+  ungroup()
+
+# Create a bar chart to visualize average feeling by genre
+ggplot(average_feeling_by_genre, aes(x = genre, y = average_feeling)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  geom_text(aes(label = sprintf("%.4f", average_feeling)), vjust = -0.5, color = "black") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Average Feeling by Genre",
+       x = "Genre",
+       y = "Average Feeling")
+```
+Here we can note that every single one of our genres fall into a range between 0.0 and 0.04, so for our purposes, we will filter the data and observe the behavior in this range.
 
 ```{r}
 library(readr)
+library(dplyr)
 library(ggplot2)
 
-# Bins to condense data of musical feel 
-num_bins <- 20 
+# Bins to condense data of musical feel
+num_bins <- 20000
 data <- data %>%
-  mutate(feeling_bin = cut(feelings, breaks = num_bins))
+  mutate(feeling_bin = cut(feelings, breaks = num_bins, labels = FALSE))
 
 # Calculate median danceability by feel of music
 median_danceability_by_feeling_bin <- data %>%
   group_by(feeling_bin) %>%
   summarise(median_danceability = median(danceability, na.rm = TRUE))
 
-# Bar chart of median danceability by feel
-ggplot(median_danceability_by_feeling_bin, aes(x = feeling_bin, y = median_danceability)) +
-  geom_bar(stat = "identity", fill = "blue") +
+# Convert feeling_bin to factor for plotting
+median_danceability_by_feeling_bin <- median_danceability_by_feeling_bin %>%
+  mutate(feeling_bin = as.numeric(as.character(feeling_bin)))
+
+# Filter data to the range 0.0 - 0.04
+filtered_data <- median_danceability_by_feeling_bin %>%
+  filter(feeling_bin >= 0 & feeling_bin <= 0.04 * num_bins)
+
+# Define the cutoff values and convert them to bin labels
+cutoff_values <- c(0.0372, 0.0306, 0.0176, 0.0291, 0.0308, 0.0303, 0.0299)
+cutoff_bins <- cutoff_values * num_bins
+
+# Create the plot
+ggplot(filtered_data, aes(x = feeling_bin / num_bins, y = median_danceability)) +
+  geom_point(color = "blue") +
+  scale_x_continuous(
+    breaks = seq(0, 0.04, by = 0.01),
+    labels = seq(0, 0.04, by = 0.01)
+  ) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Median Danceability by Feel",
+  labs(title = "Median Danceability by Feel (0.0 - 0.04)",
        x = "Feel",
-       y = "Median Danceability")
+       y = "Median Danceability") +
+  # Add vertical lines at the cutoff values
+  geom_vline(xintercept = cutoff_values, color = "red", linetype = "dashed")
 ```
+
+We can observe that between 0.01 and 0.02 we find the most peaks in danceability. Hip hop lies in this range. Jazz cuts off just before 0.03 where there is a stiff dropoff, pointing to its lack of danceability. Blues also finds itself in a position just before a peak in danceability, but this is also the point where the drop is most notable (just before 0.04). Rock finds itself in an odd position, basically on the 0.03 line where there is a stiff dropoff and peak simultaneously; maybe we can use another metric for rock since it is the outlier. Country, reggae, and pop find themselves in a very similar region, but if you observe closely, reggae hits a peak just before pop and country drop off. So, rock remains our outlier for now. We will revisit this at the end.
+
+# Instrumentality
+
 ```{r}
 library(dplyr)
 library(ggplot2)
 
-# Assuming your data frame is named 'data'
-
-# Group data by genre, calculate median feeling
-median_feeling_by_genre <- data %>%
+# Group data by genre, calculate average feeling
+average_instrumentalness_by_genre <- data %>%
   group_by(genre) %>%
-  summarise(median_feeling = median(feelings, na.rm = TRUE)) %>%
+  summarise(average_instrumentalness = mean(instrumentalness, na.rm = TRUE)) %>%
   ungroup()
 
-# Create a bar chart to visualize median feeling by genre
-ggplot(median_feeling_by_genre, aes(x = genre, y = median_feeling)) +
+# Create a bar chart to visualize average feeling by genre
+ggplot(average_instrumentalness_by_genre, aes(x = genre, y = average_instrumentalness)) +
   geom_bar(stat = "identity", fill = "blue") +
+  geom_text(aes(label = sprintf("%.4f", average_instrumentalness)), vjust = -0.5, color = "black") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Median Feeling by Genre",
+  labs(title = "Average Instrumentality by Genre",
        x = "Genre",
-       y = "Median Feeling")
+       y = "Average Instrumentality")
 ```
 
-The bar charts in fact have roughly equal heights, with minor variability not exceeding 0.1, except one outlier for the feelings between [0.671 to 0.719]. The sudden drop in median danceability can be due to a lot of factors. Our guess would be it might be a coincidence - if we devide up the feelings differently, for example, into 15 columns or into 25 columns instead of 20 columns, such gap in the median danceability might not be the case at all. 
-
-Moving on, we again want to measure the median danceability by instrumentalness. The underlying logic for calculation remains the same, where the first line initiates a pipeline for the dataset, the second line grouping the data by the instrumentalness columns, and the third line calculating the median of the danceability column for each group of instrumentalness, the fourth line printing the final dataset, which contains the median danceability values for each instrumentalness. 
+Moving onto the instrumentality, we again use similar principles, where we condense the coutinuous variable instrumentality into 20000 bins and peak within the range of 0.0 to 0.25, calculate the median danceability by instrumentality, and then visualize using a scatter plot. Jazz, blues, and rock have the highest instrumentality scores. To make a prediction, we think instrumentality will have an inverse relation to danceability. Let's confirm this with a scatterplot.
 
 ```{r}
+library(readr)
 library(dplyr)
+library(ggplot2)
 
-# Calculate median danceability by instrumentalness
-median_danceability_by_instrumentalness <- data %>%
-  group_by(instrumentalness) %>%
-  summarise(median_danceability = median(danceability, na.rm = TRUE))
-
-# Print the median danceability by instrumentalness
-print(median_danceability_by_instrumentalness)
-```
-
-Moving onto the visualization aspect, we again use similar codes, where we condense the coutinuous variable instrumentalness into 20 different columns, calculate the median danceability by instrumentalness, and then visualizing the dataset using bar chart.
-
-```{r}
-# Create bins for the instrumentalness variable
-num_bins <- 20 
+# Bins to condense data of musical feel
+num_bins <- 200000
 data <- data %>%
-  mutate(instrumentalness_bin = cut(instrumentalness, breaks = num_bins))
+  mutate(instrumentalness_bin = cut(instrumentalness, breaks = num_bins, labels = FALSE))
 
-# Calculate median danceability by instrumentalness bin
-median_danceability_by_instrumentalness <- data %>%
+# Calculate median danceability by feel of music
+median_danceability_by_instrumentalness_bin <- data %>%
   group_by(instrumentalness_bin) %>%
   summarise(median_danceability = median(danceability, na.rm = TRUE))
 
-# Bar chart of median danceability by instrumentality
-ggplot(median_danceability_by_instrumentalness, aes(x = instrumentalness_bin, y = median_danceability)) +
-  geom_bar(stat = "identity", fill = "blue") +
+# Convert feeling_bin to factor for plotting
+median_danceability_by_instrumentalness_bin <- median_danceability_by_instrumentalness_bin %>%
+  mutate(instrumentalness_bin = as.numeric(as.character(instrumentalness_bin)))
+
+# Filter data to the range 0.0 - 0.04
+filtered_data <- median_danceability_by_instrumentalness_bin %>%
+  filter(instrumentalness_bin >= 0 & instrumentalness_bin <= 0.25 * num_bins)
+
+# Define the cutoff values and convert them to bin labels
+cutoff_values <- c(0.0945, 0.0183, 0.0154, 0.2336, 0.0461, 0.0502, 0.0928)
+cutoff_bins <- cutoff_values * num_bins
+
+# Create the plot
+ggplot(filtered_data, aes(x = instrumentalness_bin / num_bins, y = median_danceability)) +
+  geom_point(color = "blue") +
+  scale_x_continuous(
+    breaks = seq(0, 0.25, by = 0.05),
+    labels = seq(0, 0.25, by = 0.05)
+  ) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Median Danceability by Instrumentality",
+  labs(title = "Median Danceability by Intrumentality (0.0 - 0.25)",
        x = "Instrumentality",
-       y = "Median Danceability")
+       y = "Median Danceability") +
+  # Add vertical lines at the cutoff values
+  geom_vline(xintercept = cutoff_values, color = "red", linetype = "dashed")
 ```
+We find that jazz finds its cutoff at a low point as suspected. What about blues and rock? Both pose as outliers in this case by encompassing a point that has both lows and peaks. that's one confirmation for blues, but rock still remains the single inconsistency. Our leader, hip hop, finds itself on an downward slope near the origin (not quite a peak but still higher than others), while it's follower country finds itself on a slight drop. One observation to note is that the danceability peaks near the origin, pointing to lower instrumentality being proportional to danceability. Reggae and op find themselves in the same scenario with reggae barely kissing a peak, and pop on a downward trend.
 
-```{r}
-library(dplyr)
-library(ggplot2)
+With this in mind, let's synthesize the data and see what we get.
 
-# Assuming your data frame is named 'data'
-
-# Group data by genre, calculate median feeling
-median_instrumentalness_by_genre <- data %>%
-  group_by(genre) %>%
-  summarise(median_instrumentalness = median(instrumentalness, na.rm = TRUE)) %>%
-  ungroup()
-
-# Create a bar chart to visualize median feeling by genre
-ggplot(median_instrumentalness_by_genre, aes(x = genre, y = median_instrumentalness)) +
-  geom_bar(stat = "identity", fill = "blue") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Median Instrumentality by Genre",
-       x = "Genre",
-       y = "Median Instrumentality")
-```
-
-The resulting chart, again doesn't show a clear trend in terms of change of median danceability between differnet levels of instrumentality. However, we would argue that roughly speaking, lower instrumentality is correlated with higher median danceability, as the bar chart's height shows a slight decreasing trend in median danceability as instrumentality increases. Recalling that a higher score in instrumentalness indicates a lower level of vocal a track contains, we can perhaps reach the conclusion that the more vocals a track contains, the more danceable the track is. 
+# Synthesis
 
 ```{r}
 # Bins for condensing data inthe feelings and instrumentalness variables
@@ -269,7 +301,9 @@ instrumentalness_bin), y = median_danceability, fill = genre)) +
        fill = "Genre")
 ```
 
-This graph synthesizes the information of the three previous bar charts. It once again demonstrates that even on a basis of feel and instumentality, reggae and hip hop are among the most consistently danceable subcategories of music.
+This graph synthesizes the information of the three previous bar charts. It once again demonstrates that even on a basis of feel and instumentality, reggae and hip hop still remain the most danceable before their respective cutoffs.
+
+# Loudness
 
 ```{r}
 library(dplyr)
@@ -281,10 +315,9 @@ median_danceability_by_loudness <- data %>%
 
 print(median_danceability_by_loudness)
 ```
+Finally, we want to explore the correlation between median danceability with decibel level for each track. To see a clearer trend, we did use bin to condense the variables into a fewer number of columns. This first line initializes a ggplot object using the median_danceability_by_loudness dataframe, setting loudness as the x-axis variable and median_danceability as the y-axis variable.
 
-Finally, we want to explore the correlation between median danceability with decibel level for each track. To see a clearer trend, we do not want to use bin to condense the variables into a few numbers of columns. This first line initializes a ggplot object using the median_danceability_by_loudness dataframe, setting loudness as the x-axis variable and median_danceability as the y-axis variable. The second line adds a bar chart layer to the plot. As a side note, the 'stat = "identity"' argument specifies that the heights of the bars should represent the actual values of median_danceability rather than counts, whereas the fill = "blue" argument colors the bars blue. The third line adjusts the x-axis text to be displayed vertically, improving readability, especially given that our original x-axis labels are very long. Finally ,the fourth line adds a title and labels to the x and y axes: The title of the chart is "Median Danceability by Loudness," the x-axis is labeled "Loudness (Db)," and the y-axis is labeled "Median Danceability."
-
-The resulting visualization has two peaks for median danceability, one around 0.5 Db and the other around 0.75 Db. There is also a very clear decrease in median danceability around 0.67 Db. We cannot be certain of the reason behind such trend yet, but we have taken notes of the trend and would be interested in finding out more about the reason behind in the next project.
+The resulting visualization has two peaks for median danceability, one around 0.35 Db and the other beyond 0.75 Db. There is also a very clear decrease in median danceability around 0.67 Db. Let's delve a bit deeper with a comparison of loudness by genre and a line graph.
 
 ```{r}
 library(readr)
@@ -300,6 +333,30 @@ ggplot(median_danceability_by_loudness, aes(x = loudness, y = median_danceabilit
 ```
 
 ```{r}
+library(dplyr)
+library(ggplot2)
+
+# Assuming your data frame is named 'data'
+
+# Group data by genre, calculate median feeling
+median_loudness_by_genre <- data %>%
+  group_by(genre) %>%
+  summarise(median_loudness = median(loudness, na.rm = TRUE)) %>%
+  ungroup()
+
+# Create a bar chart to visualize median feeling by genre
+ggplot(median_loudness_by_genre, aes(x = genre, y = median_loudness)) +
+  geom_dotplot(binaxis = 'y', stackdir = 'center', dotsize = 1) +
+  geom_text(aes(label = sprintf("%.4f", median_loudness)), vjust = -0.5, color = "black") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Loudness by Genre",
+       x = "Genre",
+       y = "Median Loudness")
+```
+
+What we find once again is that hip hop, reggae, and rock are the three loudest. The trio all sit beyond the .7 db range. Hip hop and reggae make sense, but once again, rock proves itself to be the outlier; loudness seems to be directly proportional to danceability otherwise. All of our other values are much too large to hit the initial peak around .35 db.
+
+```{r}
 library(readr)
 library(ggplot2)
 
@@ -311,6 +368,14 @@ ggplot(median_danceability_by_loudness, aes(x = loudness, y = median_danceabilit
        x = "Loudness (Db)",
        y = "Median Danceability")
 ```
+
+Taking a look at the line graph, we indeed find that there are many peaks in danceability beyond the .7 db mark. We also find that the highest peak in danceability lies within this range, further pointing to our predictions.
+
+# Acousticness
+
+Moving on to acousticness. We wanted to see how this tied into danceability.
+
+Let's observe it's properties first.
 
 ```{r}
 library(dplyr)
@@ -336,39 +401,9 @@ ggplot(median_danceability_by_acousticness, aes(x = acousticness, y = median_dan
        y = "Median Danceability")
 ```
 
-```{r}
-library(dplyr)
+Seemingly, the lower the acousticness, the higher the danceability. The highest peaks sit closest to the origin, slowly creeping down as we move further away. We also see an all time low near our highest value of acousticness. What could this mean? 
 
-# Calculate median danceability by instrumentalness
-median_danceability_by_instrumentalness <- data %>%
-  group_by(instrumentalness) %>%
-  summarise(median_danceability = median(danceability, na.rm = TRUE))
-
-# Print the median danceability by instrumentalness
-print(median_danceability_by_instrumentalness)
-```
-
-Moving onto the visualization aspect, we again use similar codes, where we condense the coutinuous variable instrumentalness into 20 different columns, calculate the median danceability by instrumentalness, and then visualizing the dataset using bar chart.
-
-```{r}
-# Create bins for the instrumentalness variable
-num_bins <- 20 
-data <- data %>%
-  mutate(instrumentalness_bin = cut(instrumentalness, breaks = num_bins))
-
-# Calculate median danceability by instrumentalness bin
-median_acousticness_by_instrumentalness <- data %>%
-  group_by(instrumentalness_bin) %>%
-  summarise(median_acousticness = median(acousticness, na.rm = TRUE))
-
-# Bar chart of median danceability by instrumentality
-ggplot(median_acousticness_by_instrumentalness, aes(x = instrumentalness_bin, y = median_acousticness)) +
-  geom_bar(stat = "identity", fill = "blue") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Median Acousticness by Instrumentality",
-       x = "Instrumentality",
-       y = "Median Acousticness")
-```
+Let's take a look at acousticness of genres.
 
 ```{r}
 library(dplyr)
@@ -391,26 +426,9 @@ ggplot(median_acousticness_by_genre, aes(x = genre, y = median_acousticness)) +
        y = "Median Acousticness")
 ```
 
-```{r}
-library(dplyr)
-library(ggplot2)
+Reggae, hip hop, and rock are staggeringly low! Which confirms our suspicion of peak danceability being at lower acoustic levels. Jazz, our lowest danceability thus far has the highest level of acousticness. Our other low scorers also have decently high acoustic scores. However, we still have a problem, rock remains our sole outlier again. Let's delve a bit deeper.
 
-# Assuming your data frame is named 'data'
-
-# Group data by genre, calculate median feeling
-median_acousticness_by_genre <- data %>%
-  group_by(genre) %>%
-  summarise(median_acousticness = median(acousticness, na.rm = TRUE)) %>%
-  ungroup()
-
-# Create a bar chart to visualize median feeling by genre
-ggplot(median_acousticness_by_genre, aes(x = genre, y = median_acousticness)) +
-  geom_bar(stat = "identity", fill = "blue") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Median Acousticness by Genre",
-       x = "Genre",
-       y = "Median Acousticness")
-```
+# Valence
 
 ```{r}
 library(dplyr)
@@ -432,6 +450,39 @@ ggplot(median_valence_by_genre, aes(x = genre, y = median_valence)) +
        x = "Genre",
        y = "Median Valence")
 ```
+
+Rock has a pitifully low score in terms of valence while our two leaders have insanely high scores. Let's see if we can finally prove that rock isn't danceable. 
+
+A comparison of valence and danceability could prove to be what we need.
+
+```{r}
+library(dplyr)
+
+# Calculate median danceability by decibel level
+median_danceability_by_valence <- data %>%
+  group_by(valence) %>%
+  summarise(median_danceability = median(valence, na.rm = TRUE))
+
+print(median_danceability_by_valence)
+
+library(readr)
+library(ggplot2)
+
+# Line graph of median danceability by decibel level
+ggplot(median_danceability_by_valence, aes(x = valence, y = median_danceability)) +
+  geom_line(color = "black") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Valence",
+       x = "Valence",
+       y = "Median Danceability")
+```
+
+Valence proves to have a linear and directly proportional relationship with danceability. It is absolute that if valence is high, danceability is high. This is why rock lacks in danceability. It lacks the euphoric highs that both reggae and hip hop are adept at producing.
+
+Which brings us to our final variable, energy.
+
+# Energy
+
 ```{r}
 # Group data by genre, calculate median feeling
 median_energy_by_genre <- data %>%
@@ -440,20 +491,53 @@ median_energy_by_genre <- data %>%
   ungroup()
 
 # Create a bar chart to visualize median feeling by genre
-ggplot(median_valence_by_genre, aes(x = genre, y = median_energy)) +
+ggplot(median_energy_by_genre, aes(x = genre, y = median_energy)) +
   geom_dotplot(binaxis = 'y', stackdir = 'center', dotsize = 1) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(title = "Median Energy by Genre",
        x = "Genre",
        y = "Median Energy")
 ```
+Interestingly enough, rock is the highest energy genre, further pointing it out as the outlier from earlier. Hip hop once again outscores the rest (besides rock), with reggae seemingly lagging behind, but still maintaining a respectable energy score. 
 
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Assuming your data frame is named 'data'
+
+# Group data by genre, calculate median feeling
+median_danceability_by_energy <- data %>%
+  group_by(energy) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE)) %>%
+  ungroup()
+
+# Create a bar chart to visualize median feeling by genre
+ggplot(median_danceability_by_energy, aes(x = energy, y = median_danceability)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Energy",
+       x = "Energy",
+       y = "Median Danceability")
+```
+However, If we take a closer look at which energy values correlate to a higher danceability we can note a few observations.
+```{r}
+# Create a bar chart to visualize median feeling by genre
+ggplot(median_danceability_by_energy, aes(x = energy, y = median_danceability)) +
+  geom_line(color = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Energy",
+       x = "Energy",
+       y = "Median Danceability")
+```
+
+Median danceability has high fluctuations at lower energy values, while hitting its peak. However it stabilizes at 0.25 to .75 before starkly dropping off beyond. Rock happens to have a energy value far beyond .7 showing exactly why there is a danceability dropoff. Hip hop hits the sweet spot right before the dropoff, and reggae finds itself amidst the peak values where energy is proportional to danceability. We have found statistics that show our outlier isn't as troublesome as we thought.
 
 ## Conclusion
 
-Overall speaking, in this report we focus on danceability of a given track, aiming to find out the relationship between danceability with four other variables: genre, feelings, instrumentalness, and loudness. Although feelings doesn't seem to have any noticeable relationship with danceability, we did find out that the other three variables having some potentially interesting relationships with danceability. Specifically, hip hop has the highest median danceability while rock has the lowest; lower instrumentality usually indicate higher median danceability; track with 0.67 Db of loudness usually has the lowest median danceability, while track with 0.5 Db and 0.75 Db of loudness have the highest. 
-
-We would like to further explore the relationship between danceability with other variables and the reasons behind in our upcoming research project. We hope that this could serve as an replicable analysis model for people finding danceable music - the next time they are in the mood for dancing. Danceability is an exciting song characteristic, but it is by no means the only one that can be analyzed. Additionally, "data preparation" and analyses similar to this code notebook breakdown function as a baseline for song recommendation algorthims on streaming platforms. Taking playlist data and finding matches in songs (and artists) with similar characeristics is a large part of manufacturing popularity surrounding new music. 
+Overall speaking, in this report we focus on the danceability of different genres, aiming to find the relationship between five other variables: feeling, instrumentality, loudness, valence, and energy. Although rock remained the outlier through our analysis of feeling, instrumentality, and loudness, valence and energy gave a basis to our initial hypothesis. What we have found is that instrumentality and acousticness have an inverse relationship with danceability. Our lowest scorers tended to have the highest scores in these categories. On the other side of the spectrum, valency had a directly proportional (linear) relationship with danceability. Our leaders had the highest scores in this category. Loudness though not linear provided a clear elimination of our outlier: rock. Feeling yielded the most inconsistent results with some slight contradictions.
+Danceability is an exciting song characteristic, but it is by no means the only one that can be analyzed. Additionally, “data preparation” and analyses similar to this code notebook breakdown function as a baseline for song recommendation algorthims on streaming platforms. Taking playlist data and finding matches in songs (and artists) with similar characeristics is a large part of manufacturing popularity surrounding new music.
+To conclude, we have found hip hop and reggae to be the most danceable for the following reasons: low acousticness, low instrumentality, high loudness, high valency, and mild energy. We believe that this points to another idea that lyrical and groovy music is more danceable. With less melodic complexities, it is easier to reap the benefits of danceability.
 
 
 Works cited:

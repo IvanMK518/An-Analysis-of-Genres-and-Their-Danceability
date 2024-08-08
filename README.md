@@ -159,3 +159,26 @@ fill = median_danceability)) +
        y = "Danceability",
        fill = "Median Danceability")
 ```
+
+```{r}
+library(readr)
+library(ggplot2)
+
+# Bins to condense data of musical feel 
+num_bins <- 400 
+data <- data %>%
+  mutate(feeling_bin = cut(feelings, breaks = num_bins))
+
+# Calculate median danceability by feel of music
+median_danceability_by_feeling_bin <- data %>%
+  group_by(feeling_bin) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+# Bar chart of median danceability by feel
+ggplot(median_danceability_by_feeling_bin, aes(x = feeling_bin, y = median_danceability)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Feel",
+       x = "Feel",
+       y = "Median Danceability")
+```
