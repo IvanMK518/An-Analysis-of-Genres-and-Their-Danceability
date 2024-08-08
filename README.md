@@ -2,7 +2,6 @@
 ― Friedrich Wilhelm Nietzsche
 
 # Danceability: Breaking Down the Vague Concept
-This project is a part of the "Technical Writing" class at Emory University. 
 
 #### -- Project Status: [Completed]
 
