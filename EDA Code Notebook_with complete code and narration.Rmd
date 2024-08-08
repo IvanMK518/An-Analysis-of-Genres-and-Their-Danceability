@@ -90,8 +90,8 @@ Each characteristic as mentioned would be assigned a value between 0-1 based on 
 The code snippet just below is selecting specific columns from our initial music.csv data set and assigning them to a new data frame called "data" that includes only these selected columns (consisting of data necessary for this coding and analysis).
 
 ```{r}
-data <- music[ ,c("genre", "loudness", "energy", 
-"danceability", "feelings", "instrumentalness", "lyrics")]
+data <- music[ ,c("genre", "loudness", 
+"danceability", "feelings", "instrumentalness", "acousticness")]
 ```
 
 In this small code chunk below, the median danceability by genre is found from the data set.
@@ -310,6 +310,87 @@ ggplot(median_danceability_by_loudness, aes(x = loudness, y = median_danceabilit
        x = "Loudness (Db)",
        y = "Median Danceability")
 ```
+
+```{r}
+library(dplyr)
+
+# Calculate median danceability by decibel level
+median_danceability_by_acousticness <- data %>%
+  group_by(acousticness) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+print(median_danceability_by_acousticness)
+```
+
+```{r}
+library(readr)
+library(ggplot2)
+
+# Line graph of median danceability by decibel level
+ggplot(median_danceability_by_acousticness, aes(x = acousticness, y = median_danceability)) +
+  geom_line(color = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Danceability by Acousticness",
+       x = "Acousticness",
+       y = "Median Danceability")
+```
+
+```{r}
+library(dplyr)
+
+# Calculate median danceability by instrumentalness
+median_danceability_by_instrumentalness <- data %>%
+  group_by(instrumentalness) %>%
+  summarise(median_danceability = median(danceability, na.rm = TRUE))
+
+# Print the median danceability by instrumentalness
+print(median_danceability_by_instrumentalness)
+```
+
+Moving onto the visualization aspect, we again use similar codes, where we condense the coutinuous variable instrumentalness into 20 different columns, calculate the median danceability by instrumentalness, and then visualizing the dataset using bar chart.
+
+```{r}
+# Create bins for the instrumentalness variable
+num_bins <- 20 
+data <- data %>%
+  mutate(instrumentalness_bin = cut(instrumentalness, breaks = num_bins))
+
+# Calculate median danceability by instrumentalness bin
+median_acousticness_by_instrumentalness <- data %>%
+  group_by(instrumentalness_bin) %>%
+  summarise(median_acousticness = median(acousticness, na.rm = TRUE))
+
+# Bar chart of median danceability by instrumentality
+ggplot(median_acousticness_by_instrumentalness, aes(x = instrumentalness_bin, y = median_acousticness)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Acousticness by Instrumentality",
+       x = "Instrumentality",
+       y = "Median Acousticness")
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Assuming your data frame is named 'data'
+
+# Group data by genre, calculate median feeling
+median_acousticness_by_genre <- data %>%
+  group_by(genre) %>%
+  summarise(median_acousticness = median(acousticness, na.rm = TRUE)) %>%
+  ungroup()
+
+# Create a bar chart to visualize median feeling by genre
+ggplot(median_acousticness_by_genre, aes(x = genre, y = median_acousticness)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Acousticness by Genre",
+       x = "Genre",
+       y = "Median Acousticness")
+```
+
+
 
 ## Conclusion
 
