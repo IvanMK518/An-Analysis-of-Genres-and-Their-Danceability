@@ -1,7 +1,7 @@
 “We should consider every day lost on which we have not danced at least once.”
 ― Friedrich Wilhelm Nietzsche
 
-# Danceability: Defining the Vague Concept
+# Danceability: Breaking Down the Vague Concept
 This project is a part of the "Technical Writing" class at Emory University. 
 
 #### -- Project Status: [Completed]
