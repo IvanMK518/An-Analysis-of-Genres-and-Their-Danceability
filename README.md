@@ -1,6 +1,6 @@
 “We should consider every day lost on which we have not danced at least once.”
 ― Friedrich Wilhelm Nietzsche
 
-Dancing is something that comes naturally to our body, and it's hard to imagine, at least sometimes, dancing without the accompany of music. Therefore, what is the relationship between music and dancing? In other words, what other features of a song can add to its danceability? Such is the question that our repository will give an answer to.
+Dancing is something that comes naturally to our body, and it's hard to imagine, at least sometimes, dancing without the accompany of music. Therefore, it is natural to wonder the relationship between music and dancing. In other words, what features of a song add to its danceability? Such is the question that our repository will give an answer to.
 
-A ReadMe with information about the repository. We will go over what should appear here, which will include a description of your project, its goals, and how users can interact with the repository
+To give you an overview of the content this repository contains, you can find the dataset of which we have based our analysis on, a renv file which allows you to replicate the computing environment we have created, and most importantly, two versions of code notebooks which contain all our codes,  analysis, and the conclusions we have reached in regards of the relationship between the different features of a song and its danceability.
