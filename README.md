@@ -40,11 +40,12 @@ We encourage others to read on and continue build on our analysis. One potential
 * Data
     * music.csv
 * Markup
-    * EDA_Code-Notebook_with_complete_code_and_narration
+    * EDA_Code-Notebook_with_complete_code_and_narration.html
 * R
-    * .DS_Store
-    * README.md
-    * renv.lock
+  * EDA_Code-Notebook_with_complete_code_and_narration.rmd
+* .DS_Store
+* README.md
+* renv.lock
 
 
 ## Getting Started
