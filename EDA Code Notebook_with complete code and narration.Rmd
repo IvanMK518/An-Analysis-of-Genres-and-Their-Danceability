@@ -82,6 +82,7 @@ In our quest to find which songs and corresponding genres from the dataset were 
   * Loudness: The average loudness in decibels (dB) across the entire track
   * Instrumentalness: A high value describes whether a track contains fewer vocals
   * Valence: High (low) values means that the track is more happy, euphoric (sad, angry)
+  * Energy: Measures intensity and activity of music. Energetic tracks will be fast, loud and noisy
 Each characteristic as mentioned would be assigned a value between 0-1 based on equation 1 (shown above).
 
 ## Analysis
@@ -91,7 +92,7 @@ The code snippet just below is selecting specific columns from our initial music
 ```{r}
 data <- music[ ,c("genre", "loudness", 
 "danceability", "feelings", "instrumentalness", "acousticness",
-"valence")]
+"valence", "energy")]
 ```
 
 In this small code chunk below, the median danceability by genre is found from the data set.
@@ -116,7 +117,7 @@ ggplot(median_danceability_by_genre, aes(x = genre, y = median_danceability)) +
        y = "Median Danceability")
 ```
 
-From the above visualization, we notice that hiphop genre has the highest media danceability, closely followed by reggae, which is quite close to what people would generally assumed. The genre with the lowest danceability is rock, with the second lowest genre being blues. As blues is a rather slow genre, we do not feel surprised to see it ranked as the second to last. However, rock, being such a rhythmic genre but ranking as the last danceable genre, is quite surprising to us. 
+From the above visualization, we notice that hiphop genre has the highest media danceability, closely followed by reggae, which similar to what people would generally assume. The genre with the lowest danceability is rock, with the second lowest genre being blues. As blues is a rather slow genre, we are not surprised to see it ranked so low. However, rock, being such a rhythmic genre but ranking as the least danceable genre, is quite surprising to us. 
 
 For the next part, we mainly want to visualize media danceability by different values of feeling. To do so, we first need to calculate the media danceability by feeling, which is accomplished by the first three lines of the following code, where the first line initiates a pipeline for the dataset, the second line grouping the data by the feeling columns, and the thid line calculating the median of the danceability column for each group of feelings. As a sidenote, the na.rm = TRUE argument ensures that any NA (missing) values in the danceability column are ignored during the median calculation. Then, the fourth line prints the median_danceability_by_feeling dataframe, which contains the median danceability values for each feeling.
 
@@ -430,6 +431,21 @@ ggplot(median_valence_by_genre, aes(x = genre, y = median_valence)) +
   labs(title = "Median Valence by Genre",
        x = "Genre",
        y = "Median Valence")
+```
+```{r}
+# Group data by genre, calculate median feeling
+median_energy_by_genre <- data %>%
+  group_by(genre) %>%
+  summarise(median_energy = median(energy, na.rm = TRUE)) %>%
+  ungroup()
+
+# Create a bar chart to visualize median feeling by genre
+ggplot(median_valence_by_genre, aes(x = genre, y = median_energy)) +
+  geom_dotplot(binaxis = 'y', stackdir = 'center', dotsize = 1) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Median Energy by Genre",
+       x = "Genre",
+       y = "Median Energy")
 ```
 
 
