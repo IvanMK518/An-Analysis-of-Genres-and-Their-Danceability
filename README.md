@@ -37,22 +37,23 @@ We encourage others to read on and continue build on our analysis. One potential
 - writeup/reporting
 
 ## Directory Stucture
-Edit me to generate
-  a
-    nice
-      tree
-        diagram!
-        :)
-  Use indentation
-    to indicate
-      file
-      and
-      folder
-      nesting.
-    - You can even
-      - use
-        - markdown
-        - bullets!
+.
+└── Edit me to generate/
+    ├── a/
+    │   └── nice/
+    │       └── tree/
+    │           ├── diagram!
+    │           └── :)
+    └── Use indentation/
+        ├── to indicate/
+        │   ├── file
+        │   ├── and
+        │   ├── folder
+        │   └── nesting.
+        └── You can even/
+            └── use/
+                ├── markdown
+                └── bullets!
 
 ## Getting Started
 
