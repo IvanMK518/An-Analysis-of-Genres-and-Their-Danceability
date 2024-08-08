@@ -37,23 +37,15 @@ We encourage others to read on and continue build on our analysis. One potential
 - writeup/reporting
 
 ## Directory Stucture
-.
-└── Edit me to generate/
-    ├── a/
-    │   └── nice/
-    │       └── tree/
-    │           ├── diagram!
-    │           └── :)
-    └── Use indentation/
-        ├── to indicate/
-        │   ├── file
-        │   ├── and
-        │   ├── folder
-        │   └── nesting.
-        └── You can even/
-            └── use/
-                ├── markdown
-                └── bullets!
+
+Data
+    music.csv
+Markup
+    EDA_Code-Notebook_with_complete_code_and_narration
+R
+    .DS_Store
+    README.md
+    renv.lock
 
 ## Getting Started
 
