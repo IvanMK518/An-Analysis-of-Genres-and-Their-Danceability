@@ -90,6 +90,7 @@ Each characteristic as mentioned would be assigned a value between 0-1 based on 
 The code snippet just below is selecting specific columns from our initial music.csv data set and assigning them to a new data frame called "data" that includes only these selected columns (consisting of data necessary for this coding and analysis).
 
 ```{r}
+# Trimming dataset for specific variables
 data <- music[ ,c("genre", "loudness", 
 "danceability", "feelings", "instrumentalness", "acousticness",
 "valence", "energy")]
@@ -108,7 +109,7 @@ print(median_danceability_by_genre)
 The first line is creating a data frame called "median_danceability_by_genre" from the "data" data frame and this pipe operator (%>%) allows the author to chain multiple functions together in a clear and readable way. The data frame data is passed to the next function in the chain. Then using the "group_by" function the data frame is grouped by the genre column. This means that subsequent operations will be performed separately for each genre. The 2nd to last line creates a new data frame containing summary statistics using "summmarise." In this case, it will create one row per genre. "median(danceability, na.rm = TRUE)" will calculates the median of the danceability column for each genre group from the data set. The na.rm = TRUE argument ensures that any NA (missing) values are removed before calculating the median. Finally, the new data frame is printed, showing a 2 column chart with 7 rows. Each row should show a genre in one column with a corresponding median danceability score in the other.
 
 ```{r}
-# Create a bar chart of median danceability by genre
+# Bar chart of median danceability by genre
 ggplot(median_danceability_by_genre, aes(x = genre, y = median_danceability)) +
   geom_bar(stat = "identity", fill = "blue") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -131,7 +132,6 @@ median_danceability_by_feeling <- data %>%
   group_by(feelings) %>%
   summarise(median_danceability = median(danceability, na.rm = TRUE))
 
-# Print the median danceability by feeling
 print(median_danceability_by_feeling)
 ```
 
@@ -149,7 +149,6 @@ average_feeling_by_genre <- data %>%
   summarise(average_feeling = mean(feelings, na.rm = TRUE)) %>%
   ungroup()
 
-# Create a bar chart to visualize average feeling by genre
 ggplot(average_feeling_by_genre, aes(x = genre, y = average_feeling)) +
   geom_bar(stat = "identity", fill = "blue") +
   geom_text(aes(label = sprintf("%.4f", average_feeling)), vjust = -0.5, color = "black") + 
@@ -187,7 +186,6 @@ filtered_data <- median_danceability_by_feeling_bin %>%
 cutoff_values <- c(0.0372, 0.0306, 0.0176, 0.0291, 0.0308, 0.0303, 0.0299)
 cutoff_bins <- cutoff_values * num_bins
 
-# Create the plot
 ggplot(filtered_data, aes(x = feeling_bin / num_bins, y = median_danceability)) +
   geom_point(color = "blue") +
   scale_x_continuous(
@@ -198,7 +196,8 @@ ggplot(filtered_data, aes(x = feeling_bin / num_bins, y = median_danceability)) 
   labs(title = "Median Danceability by Feel (0.0 - 0.04)",
        x = "Feel",
        y = "Median Danceability") +
-  # Add vertical lines at the cutoff values
+
+  # Vertical lines at the cutoff values
   geom_vline(xintercept = cutoff_values, color = "red", linetype = "dashed")
 ```
 
@@ -216,7 +215,6 @@ average_instrumentalness_by_genre <- data %>%
   summarise(average_instrumentalness = mean(instrumentalness, na.rm = TRUE)) %>%
   ungroup()
 
-# Create a bar chart to visualize average feeling by genre
 ggplot(average_instrumentalness_by_genre, aes(x = genre, y = average_instrumentalness)) +
   geom_bar(stat = "identity", fill = "blue") +
   geom_text(aes(label = sprintf("%.4f", average_instrumentalness)), vjust = -0.5, color = "black") + 
@@ -247,15 +245,14 @@ median_danceability_by_instrumentalness_bin <- data %>%
 median_danceability_by_instrumentalness_bin <- median_danceability_by_instrumentalness_bin %>%
   mutate(instrumentalness_bin = as.numeric(as.character(instrumentalness_bin)))
 
-# Filter data to the range 0.0 - 0.04
+# Filter data to the range 0.0 - 0.25
 filtered_data <- median_danceability_by_instrumentalness_bin %>%
   filter(instrumentalness_bin >= 0 & instrumentalness_bin <= 0.25 * num_bins)
 
-# Define the cutoff values and convert them to bin labels
+# Cutoff values and convert them to bin labels
 cutoff_values <- c(0.0945, 0.0183, 0.0154, 0.2336, 0.0461, 0.0502, 0.0928)
 cutoff_bins <- cutoff_values * num_bins
 
-# Create the plot
 ggplot(filtered_data, aes(x = instrumentalness_bin / num_bins, y = median_danceability)) +
   geom_point(color = "blue") +
   scale_x_continuous(
@@ -266,7 +263,7 @@ ggplot(filtered_data, aes(x = instrumentalness_bin / num_bins, y = median_dancea
   labs(title = "Median Danceability by Intrumentality (0.0 - 0.25)",
        x = "Instrumentality",
        y = "Median Danceability") +
-  # Add vertical lines at the cutoff values
+  # Vertical lines at the cutoff values
   geom_vline(xintercept = cutoff_values, color = "red", linetype = "dashed")
 ```
 We find that jazz finds its cutoff at a low point as suspected. What about blues and rock? Both pose as outliers in this case by encompassing a point that has both lows and peaks. that's one confirmation for blues, but rock still remains the single inconsistency. Our leader, hip hop, finds itself on an downward slope near the origin (not quite a peak but still higher than others), while it's follower country finds itself on a slight drop. One observation to note is that the danceability peaks near the origin, pointing to lower instrumentality being proportional to danceability. Reggae and op find themselves in the same scenario with reggae barely kissing a peak, and pop on a downward trend.
@@ -276,7 +273,7 @@ With this in mind, let's synthesize the data and see what we get.
 # Synthesis
 
 ```{r}
-# Bins for condensing data inthe feelings and instrumentalness variables
+# Bins for condensing data (feelings and instrumentalness variables)
 num_bins_feelings <- 2
 num_bins_instrumentalness <- 2
 
@@ -290,7 +287,7 @@ median_danceability_by_genre_feeling_instrumentalness <- data %>%
   group_by(genre, feeling_bin, instrumentalness_bin) %>%
   summarise(median_danceability = median(danceability, na.rm = TRUE))
 
-# Create a bar chart of median danceability by genre, feelings bin, and instrumentalness bin
+#Synthesis chart
 ggplot(median_danceability_by_genre_feeling_instrumentalness, aes(x = interaction(feeling_bin, 
 instrumentalness_bin), y = median_danceability, fill = genre)) +
   geom_bar(stat = "identity", position = "dodge") +
@@ -336,15 +333,12 @@ ggplot(median_danceability_by_loudness, aes(x = loudness, y = median_danceabilit
 library(dplyr)
 library(ggplot2)
 
-# Assuming your data frame is named 'data'
-
-# Group data by genre, calculate median feeling
+# Group data by genre, calculate median loudness
 median_loudness_by_genre <- data %>%
   group_by(genre) %>%
   summarise(median_loudness = median(loudness, na.rm = TRUE)) %>%
   ungroup()
 
-# Create a bar chart to visualize median feeling by genre
 ggplot(median_loudness_by_genre, aes(x = genre, y = median_loudness)) +
   geom_dotplot(binaxis = 'y', stackdir = 'center', dotsize = 1) +
   geom_text(aes(label = sprintf("%.4f", median_loudness)), vjust = -0.5, color = "black") +
@@ -380,7 +374,7 @@ Let's observe it's properties first.
 ```{r}
 library(dplyr)
 
-# Calculate median danceability by decibel level
+# Calculate median danceability by acousticness
 median_danceability_by_acousticness <- data %>%
   group_by(acousticness) %>%
   summarise(median_danceability = median(danceability, na.rm = TRUE))
@@ -392,7 +386,7 @@ print(median_danceability_by_acousticness)
 library(readr)
 library(ggplot2)
 
-# Line graph of median danceability by decibel level
+# Line graph of median danceability by acousticness
 ggplot(median_danceability_by_acousticness, aes(x = acousticness, y = median_danceability)) +
   geom_line(color = "blue") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -409,15 +403,12 @@ Let's take a look at acousticness of genres.
 library(dplyr)
 library(ggplot2)
 
-# Assuming your data frame is named 'data'
-
-# Group data by genre, calculate median feeling
+# Group data by genre, calculate median acousticness
 median_acousticness_by_genre <- data %>%
   group_by(genre) %>%
   summarise(median_acousticness = median(acousticness, na.rm = TRUE)) %>%
   ungroup()
 
-# Create a bar chart to visualize median feeling by genre
 ggplot(median_acousticness_by_genre, aes(x = genre, y = median_acousticness)) +
   geom_bar(stat = "identity", fill = "blue") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -434,15 +425,12 @@ Reggae, hip hop, and rock are staggeringly low! Which confirms our suspicion of 
 library(dplyr)
 library(ggplot2)
 
-# Assuming your data frame is named 'data'
-
-# Group data by genre, calculate median feeling
+# Group data by genre, calculate median valence
 median_valence_by_genre <- data %>%
   group_by(genre) %>%
   summarise(median_valence = median(valence, na.rm = TRUE)) %>%
   ungroup()
 
-# Create a bar chart to visualize median feeling by genre
 ggplot(median_valence_by_genre, aes(x = genre, y = median_valence)) +
   geom_dotplot(binaxis = 'y', stackdir = 'center', dotsize = 1) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -458,7 +446,7 @@ A comparison of valence and danceability could prove to be what we need.
 ```{r}
 library(dplyr)
 
-# Calculate median danceability by decibel level
+# Calculate median danceability by valence
 median_danceability_by_valence <- data %>%
   group_by(valence) %>%
   summarise(median_danceability = median(valence, na.rm = TRUE))
