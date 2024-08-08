@@ -10,9 +10,9 @@ This project is a part of the "Technical Writing" class at Emory University.
 The purpose of this project is to define danceability, a vague term, with more concrete vocabs. Specifically, we want to identify a few correlations between danceability and other features of songs, which eventually allows people to play songs accompanying dancing based on a song's loudness, amount of instrumentality involved, etc. instead of looking for a specific index called "danceability," which is indeed hard to find on a lot of music platforms.
 
 ### Partner
-Ivan Martinez-Kay
-Daniel Nickas
-Sandy Ge
+* Ivan Martinez-Kay
+* Daniel Nickas
+* Sandy Ge
 
 ### Methods Used
 * Data Cleaning
@@ -36,18 +36,37 @@ We encourage others to read on and continue build on our analysis. One potential
 - statistical modeling
 - writeup/reporting
 
+## Directory Stucture
+.
+└── Edit me to generate/
+    ├── a/
+    │   └── nice/
+    │       └── tree/
+    │           ├── diagram!
+    │           └── :)
+    └── Use indentation/
+        ├── to indicate/
+        │   ├── file
+        │   ├── and
+        │   ├── folder
+        │   └── nesting.
+        └── You can even/
+            └── use/
+                ├── markdown
+                └── bullets!
+
 ## Getting Started
 
 1. Clone this repo (for help see this [tutorial](https://help.github.com/articles/cloning-a-repository/)).
 2. Raw Data is being kept in the data folder within this repo. 
 3. Data processing/transformation scripts are being kept in the R folder within this repo.
 
-## Contacts
+## Contacts Info
 
-|Name     |  Slack Handle   | 
+|Name     |  Email   | 
 |---------|-----------------|
 |[Ivan Martinez-Kay]|ivan.martinez-kay@emory.edu|
 |[Daniel Nickas]|daniel.nickas@emory.edu|
 |[Sandy Ge]|sandy.ge@emory.edu|
 
-* Feel free to contact team leads with any questions or if you are interested in contributing!
+* Feel free to contact us with any questions or if you are interested in contributing!
